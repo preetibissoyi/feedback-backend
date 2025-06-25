@@ -33,12 +33,32 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 // Routes
-// app.use('/', indexRouter);
-// app.use('/users', usersRouter);
-// app.use('/feedback', feedbackRouter);
 app.use('/studentfeedback', studentFeedbackRouter);
 app.use('/alumnifeedback', alumniFeedbackRouter);
 app.use('/parentfeedback', parentFeedbackRouter);
+
+// View feedback route for admin access
+app.get('/feedback', async (req, res) => {
+  try {
+    const { admin_password } = req.query;
+    
+    // Simple password check (in production, use proper authentication)
+    if (admin_password !== 'admin123') {
+      return res.status(401).json({ error: 'Invalid password' });
+    }
+    
+    const Feedback = require('./models/feedback');
+    const feedbacks = await Feedback.find().sort({ submittedAt: -1 });
+    
+    res.json({
+      totalFeedbacks: feedbacks.length,
+      feedbacks: feedbacks
+    });
+  } catch (error) {
+    console.error('View feedback error:', error);
+    res.status(500).json({ error: 'Failed to fetch feedback data.' });
+  }
+});
 
 // Error handling middleware
 app.use((err, req, res, next) => {
