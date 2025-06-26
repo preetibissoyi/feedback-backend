@@ -6,5 +6,7 @@ const alumniFeedbackController = require('../controllers/alumniFeedbackControlle
 router.post('/alumni', alumniFeedbackController.submitAlumniFeedback);
 // Get alumni feedback statistics
 router.get('/', alumniFeedbackController.getAlumniFeedbackStats);
+// Get all alumni feedbacks
+router.get('/all', alumniFeedbackController.getAllAlumniFeedbacks);
 
 module.exports = router; 

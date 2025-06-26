@@ -6,5 +6,7 @@ const studentFeedbackController = require('../controllers/studentFeedbackControl
 router.post('/student', studentFeedbackController.submitStudentFeedback);
 // Get student feedback statistics
 router.get('/', studentFeedbackController.getStudentFeedbackStats);
+// Get all student feedbacks
+router.get('/all', studentFeedbackController.getAllStudentFeedbacks);
 
 module.exports = router; 

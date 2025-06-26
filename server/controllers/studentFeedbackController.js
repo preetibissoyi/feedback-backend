@@ -98,10 +98,33 @@ exports.submitStudentFeedback = async (req, res) => {
 
 exports.getAllStudentFeedbacks = async (req, res) => {
   try {
-    const feedbacks = await Feedback.find({ type: 'student' }).sort({ submittedAt: -1 });
+    const { limit, page, sortBy, sortOrder } = req.query;
+    
+    let options = { sort: { submittedAt: -1 } };
+    
+    // Pagination support
+    if (limit) {
+      options.limit = parseInt(limit);
+    }
+    
+    if (page) {
+      options.skip = (parseInt(page) - 1) * (options.limit || 10);
+    }
+    
+    // Sorting support
+    if (sortBy) {
+      const order = sortOrder === 'asc' ? 1 : -1;
+      options.sort = { [sortBy]: order };
+    }
+    
+    const feedbacks = await Feedback.find({ type: 'student' }, null, options);
+    const totalCount = await Feedback.countDocuments({ type: 'student' });
+    
     res.json({
-      totalFeedbacks: feedbacks.length,
-      feedbacks
+      totalStudentFeedbacks: totalCount,
+      currentPage: page ? parseInt(page) : 1,
+      limit: options.limit || totalCount,
+      feedbacks: feedbacks
     });
   } catch (error) {
     console.error('Fetch student feedbacks error:', error);
