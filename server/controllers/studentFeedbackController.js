@@ -2,6 +2,7 @@ const Feedback = require('../models/feedback');
 
 exports.submitStudentFeedback = async (req, res) => {
   try {
+
     const {
       department,
       yearOfStudy,
@@ -82,7 +83,7 @@ exports.submitStudentFeedback = async (req, res) => {
       },
       rawFormData: req.body
     };
-
+    
     const newFeedback = new Feedback(feedbackData);
     await newFeedback.save();
     res.status(201).json({
@@ -101,22 +102,18 @@ exports.getAllStudentFeedbacks = async (req, res) => {
     const { limit, page, sortBy, sortOrder } = req.query;
     
     let options = { sort: { submittedAt: -1 } };
-    
     // Pagination support
     if (limit) {
       options.limit = parseInt(limit);
     }
-    
     if (page) {
       options.skip = (parseInt(page) - 1) * (options.limit || 10);
     }
-    
     // Sorting support
     if (sortBy) {
       const order = sortOrder === 'asc' ? 1 : -1;
       options.sort = { [sortBy]: order };
     }
-    
     const feedbacks = await Feedback.find({ type: 'student' }, null, options);
     const totalCount = await Feedback.countDocuments({ type: 'student' });
     

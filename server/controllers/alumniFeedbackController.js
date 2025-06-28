@@ -2,7 +2,7 @@ const Feedback = require('../models/feedback');
 
 exports.submitAlumniFeedback = async (req, res) => {
   try {
-    // Extract alumni-specific fields from req.body
+    
     const {
       name,
       graduationYear,
@@ -110,7 +110,6 @@ exports.getAllAlumniFeedbacks = async (req, res) => {
     if (page) {
       options.skip = (parseInt(page) - 1) * (options.limit || 10);
     }
-    
     // Sorting support
     if (sortBy) {
       const order = sortOrder === 'asc' ? 1 : -1;

@@ -2,7 +2,7 @@ const Feedback = require('../models/feedback');
 
 exports.submitParentFeedback = async (req, res) => {
   try {
-    // Extract parent-specific fields from req.body
+
     const {
       studentName,
       studentYear,
