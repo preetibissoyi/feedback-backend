@@ -10,10 +10,14 @@ const studentFeedbackRouter = require('./routes/studentFeedback');
 const alumniFeedbackRouter = require('./routes/alumniFeedback');
 const parentFeedbackRouter = require('./routes/parentFeedback');
 // MongoDB connection
-const mongoURI = process.env.MONGODB_URI || 'mongodb+srv://Xappsoft:Xappsoft2025@cluster0.insqjcr.mongodb.net/feedback';
-mongoose.connect(mongoURI, { useNewUrlParser: true, useUnifiedTopology: true })
-  .then(() => console.log('MongoDB connected'))
-  .catch(err => console.error('MongoDB connection error:', err));
+const mongoURI = process.env.MONGODB_URI;
+if (!mongoURI) {
+  console.error('Missing MONGODB_URI. Set it in environment variables (Render dashboard).');
+} else {
+  mongoose.connect(mongoURI)
+    .then(() => console.log('MongoDB connected'))
+    .catch(err => console.error('MongoDB connection error:', err));
+}
 
 var app = express();
 
@@ -36,6 +40,19 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/studentfeedback', studentFeedbackRouter);
 app.use('/alumnifeedback', alumniFeedbackRouter);
 app.use('/parentfeedback', parentFeedbackRouter);
+
+// Health endpoint for monitoring/debugging
+app.get('/health', (req, res) => {
+  const states = ['disconnected', 'connected', 'connecting', 'disconnecting'];
+  res.json({
+    ok: true,
+    service: 'feedback-backend',
+    db: {
+      readyState: mongoose.connection.readyState,
+      state: states[mongoose.connection.readyState] || 'unknown'
+    }
+  });
+});
 
 // Root route to view all feedback data with query parameters
 app.get('/', async (req, res) => {

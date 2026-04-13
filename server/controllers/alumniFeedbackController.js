@@ -1,7 +1,20 @@
 const Feedback = require('../models/feedback');
+const mongoose = require('mongoose');
+
+function ensureDbReady(res) {
+  if (mongoose.connection.readyState !== 1) {
+    res.status(503).json({
+      error: 'Database not connected.',
+      hint: 'Check MONGODB_URI and network access (e.g., MongoDB Atlas IP allowlist).'
+    });
+    return false;
+  }
+  return true;
+}
 
 exports.submitAlumniFeedback = async (req, res) => {
   try {
+    if (!ensureDbReady(res)) return;
     
     const {
       name,
@@ -98,6 +111,7 @@ exports.submitAlumniFeedback = async (req, res) => {
 
 exports.getAllAlumniFeedbacks = async (req, res) => {
   try {
+    if (!ensureDbReady(res)) return;
     const { limit, page, sortBy, sortOrder } = req.query;
     
     let options = { sort: { submittedAt: -1 } };
@@ -133,6 +147,7 @@ exports.getAllAlumniFeedbacks = async (req, res) => {
 
 exports.getAlumniFeedbackStats = async (req, res) => {
   try {
+    if (!ensureDbReady(res)) return;
     const stats = await Feedback.aggregate([
       { $match: { type: 'alumni' } },
       { $group: { _id: null, count: { $sum: 1 } } }
