@@ -10,7 +10,7 @@ const studentFeedbackRouter = require('./routes/studentFeedback');
 const alumniFeedbackRouter = require('./routes/alumniFeedback');
 const parentFeedbackRouter = require('./routes/parentFeedback');
 // MongoDB connection
-const mongoURI = process.env.MONGODB_URI || 'mongodb+srv://xappsoft:xappsoft%40123@cluster0.jvr4sjv.mongodb.net/feedback';
+const mongoURI = process.env.MONGODB_URI || 'mongodb+srv://Xappsoft:Xappsoft2025@cluster0.insqjcr.mongodb.net/feedback';
 mongoose.connect(mongoURI, { useNewUrlParser: true, useUnifiedTopology: true })
   .then(() => console.log('MongoDB connected'))
   .catch(err => console.error('MongoDB connection error:', err));
